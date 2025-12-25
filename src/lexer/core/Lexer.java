@@ -7,7 +7,7 @@ import java.io.IOException;
 
 
 public class Lexer {
-    private String[] lines;
+    private final String[] lines;
     private int line;
     private int column;
 
@@ -21,6 +21,25 @@ public class Lexer {
 
     public Token nextToken() throws IOException{
         //tokenization
+        skipWhiteSpace();
+        if (isEnd()){
+            return new Token(TokenType.TOKEN_EOF, "");
+        }
+        char currChar=currentChar();
+        if (Character.isLetter(currChar) || currChar=='_'){
+            return readIdentifierOrKeyword();
+        }
+        if (currChar=='"'){
+            MoveTOnextChar();
+            return readStringLiteral();
+        }
+        if (Character.isDigit(currChar)){
+            return readNumber();
+        }
+        if (!Character.isLetterOrDigit(currChar) && !Character.isWhitespace(currChar)){
+            return readSymbol();
+        }
+        
         
         
         return null;
