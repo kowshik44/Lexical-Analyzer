@@ -17,6 +17,13 @@ public class Lexer {
         this.line = 0;
         this.column = 0;
     }
+    // public void start() throws IOException{
+    //     Token token;
+    //     do{
+    //         token=nextToken();
+    //         System.out.println(token);
+    //     }while (token.type != TokenType.TOKEN_EOF);
+    // }
 
 
     public Token nextToken() throws IOException{
@@ -78,11 +85,9 @@ public class Lexer {
         return '\0';
     }
     private boolean isEnd(){
-        if(line==lines.length){
-            return true;
-        }
-        return false;
         // return line >= lines.length;
+        
+        return line==lines.length;
 
     }
     private void skipWhiteSpace(){
@@ -270,6 +275,58 @@ public class Lexer {
         StringBuilder symbol=new StringBuilder();
 
         while (!isEnd() && !Character.isLetterOrDigit(currentChar()) && !Character.isWhitespace(currentChar())){
+            // multi-character operators first
+            if (currentChar()=='=' && LooknextChar()=='='){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_OP_EQ_EQ, symbol.toString());
+            }
+            if (currentChar()=='!' && LooknextChar()=='='){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_OP_NOT_EQ, symbol.toString());
+            }
+            if (currentChar()=='>' && LooknextChar()=='='){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_OP_GT_EQ, symbol.toString());
+            }
+            if (currentChar()=='<' && LooknextChar()=='='){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_OP_LT_EQ, symbol.toString());
+            }
+            if (currentChar()=='|' && LooknextChar()=='|'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_OP_OR, symbol.toString());
+            }
+            if (currentChar()=='&' && LooknextChar()=='&'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_OP_AND, symbol.toString());
+            }
+            if (currentChar()=='-' && LooknextChar()=='>'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_OP_ARROW, symbol.toString());
+            }
+
+            // single-character operators
             if ( currentChar()=='+'){
                 symbol.append(currentChar());
                 MoveTOnextChar();
@@ -300,13 +357,6 @@ public class Lexer {
                 MoveTOnextChar();
                 return new Token(TokenType.TOKEN_OP_EQ, symbol.toString());
             }
-            if(currentChar()== '!' && LooknextChar()=='='){
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                return new Token(TokenType.TOKEN_OP_NOT_EQ, symbol.toString());
-            }
             if(currentChar()=='>'){
                 symbol.append(currentChar());
                 MoveTOnextChar();
@@ -317,63 +367,70 @@ public class Lexer {
                 MoveTOnextChar();
                 return new Token(TokenType.TOKEN_OP_LT, symbol.toString());
             }
-            if(currentChar()=='>' && LooknextChar()=='='){
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                return new Token(TokenType.TOEKN_OP_EQ_EQ, symbol.toString());
-            }
-            if(currentChar()=='<' && LooknextChar()=='='){
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                return new Token(TokenType.TOKEN_OP_LT_EQ, symbol.toString());
-            }
-            if(currentChar()=='=' && LooknextChar()=='='){
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                return new Token(TokenType.TOEKN_OP_EQ_EQ, symbol.toString());
-            }
-            if(currentChar()=='|' && LooknextChar()=='|'){
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                return new Token(TokenType.TOKEN_OP_OR, symbol.toString());
-            }
-            if(currentChar()=='&' && LooknextChar()=='&'){
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                return new Token(TokenType.TOKEN_OP_AND, symbol.toString());
-            }
             if(currentChar()=='!'){
                 symbol.append(currentChar());
                 MoveTOnextChar();
                 return new Token(TokenType.TOKEN_OP_NOT, symbol.toString());
-            }
-            if(currentChar()=='-' && LooknextChar()=='>'){
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                symbol.append(currentChar());
-                MoveTOnextChar();
-                return new Token(TokenType.TOKEN_OP_ARROW, symbol.toString());
             }
             if(currentChar()=='|'){
                 symbol.append(currentChar());
                 MoveTOnextChar();
                 return new Token(TokenType.TOKEN_OP_PIPE, symbol.toString());
             }
-            break;
 
+            // delimiters
+            if(currentChar()==';'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_SEMICLN, symbol.toString());
+            }
+            if(currentChar()==','){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_COMMA, symbol.toString());
+            }
+            if(currentChar()=='('){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_LPAREN, symbol.toString());
+            }
+            if(currentChar()==')'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_RPAREN, symbol.toString());
+            }
+            if(currentChar()=='['){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_LBRACT, symbol.toString());
+            }
+            if(currentChar()==']'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_RBRACT, symbol.toString());
+            }
+            if(currentChar()=='{'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_LBRACE, symbol.toString());
+            }
+            if(currentChar()=='}'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_RBRACE, symbol.toString());
+            }
+            if(currentChar()==':'){
+                symbol.append(currentChar());
+                MoveTOnextChar();
+                return new Token(TokenType.TOKEN_DLM_COLON, symbol.toString());
+            }
+
+            // if we didn't match anything, consume 1 char to avoid stalling
+            symbol.append(currentChar());
+            MoveTOnextChar();
+            return new Token(TokenType.TOKEN_INVALID, symbol.toString());
         }
         String symbolValue=symbol.toString();
-        // return null;
         return new Token(TokenType.TOKEN_INVALID, symbolValue);
     }
 

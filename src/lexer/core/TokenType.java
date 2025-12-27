@@ -34,7 +34,7 @@ public enum TokenType {
     TOKEN_OP_LT         ,
     TOKEN_OP_GT_EQ      ,
     TOKEN_OP_LT_EQ      ,
-    TOEKN_OP_EQ_EQ      ,
+    TOKEN_OP_EQ_EQ      ,
     TOKEN_OP_OR         ,
     TOKEN_OP_AND        ,
     TOKEN_OP_NOT        ,

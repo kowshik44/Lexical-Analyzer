@@ -8,11 +8,14 @@ public class Token {
     public Token(TokenType type, String value) {
         this.type = type;
         this.value = value;
-
     }
-    public void Token(){
-        TokenType type=TokenType.TOKEN_INVALID;
-        String value="";    
+    public Token() {
+        this(TokenType.TOKEN_INVALID, "");
+    }
+
+    @Override
+    public String toString() {
+        return "Token{" + "type=" + type + ", value='" + value + '\'' + '}';
     }
     //Tokentype type=TokenType.TOKEN_INVALID;
     // public enum Tokentype {
