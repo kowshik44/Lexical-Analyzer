@@ -9,7 +9,7 @@ I may need to create new branches while developing this project further.
 
 I created two more branches.
 In branch "lexercode", i updated code of lexer.java file.
-In branch "thirdbranch", I updated remaining code and we can run this project.
+In branch "thirdbranch", I updated remaining code and we can run this project. Third branch code is almost the end code.
 
 To run, in terminal, we need these command,
 javac lexer/*.java lexer/core/*.java util/*.java ; java lexer.Main
